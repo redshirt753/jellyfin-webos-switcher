@@ -1,0 +1,38 @@
+# Add this service to the SAME compose file (or Docker network) as Jellyfin.
+# nginx finds Jellyfin by its service name, "jellyfin", on port 8096.
+#
+# Paths are relative to this file. Change them if you keep config elsewhere.
+
+services:
+  # jellyfin:
+  #   ...your existing Jellyfin service, unchanged...
+
+  jellyfin-webos-switcher:
+    image: nginx:1.30.6-alpine # stable branch; or nginx:1.31.x-alpine for mainline
+    container_name: jellyfin-webos-switcher
+    environment:
+      - TZ=Europe/London
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d:ro
+      - ./inject:/usr/share/nginx/inject:ro
+    ports:
+      # Loopback only: your TLS reverse proxy on the same host is the only client.
+      # If your reverse proxy runs in Docker on the same network, delete "ports"
+      # and point it at http://jellyfin-webos-switcher:80 instead.
+      - 127.0.0.1:8097:80/tcp
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /run
+      - /tmp
+    depends_on:
+      - jellyfin
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/__health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
