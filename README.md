@@ -153,8 +153,8 @@ Please read this before putting it on your network.
 
 | | Version |
 |---|---|
-| Jellyfin server | 10.x.x <!-- TODO: fill in --> |
-| Jellyfin webOS app | x.x.x <!-- TODO: fill in --> |
+| Jellyfin server | 12.4 |
+| Jellyfin for webOS app | 1.2.2 |
 | webOS | 6 (Chrome 79) |
 | nginx | 1.30.6-alpine |
 
